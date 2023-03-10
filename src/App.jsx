@@ -24,6 +24,7 @@ export default function App() {
     if (!query) {
       return;
     }
+
     setIsLoading(true);
 
     fetchApi(query, page)
@@ -42,15 +43,14 @@ export default function App() {
           return;
         } else {
           setImages(prevState => [...prevState, ...array]);
-          setImagesOnPage(prevState => prevState + imagesOnPage);
-          setTotalImages(totalHits);
+          setImagesOnPage(prevState => prevState + array.length);
         }
       })
       .catch(error => {
         setError(error);
       })
       .finally(() => setIsLoading(false));
-  }, [query, page, error, imagesOnPage]);
+  }, [query, page, error]);
 
   const getResult = query => {
     setQuery(query);
