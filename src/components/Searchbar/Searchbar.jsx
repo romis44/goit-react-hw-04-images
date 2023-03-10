@@ -12,7 +12,7 @@ export default function Searchbar({ onSearch }) {
   const onSubmit = e => {
     e.preventDefault();
 
-    // onSearch(query);
+    onSearch(query);
 
     if (!query.trim()) {
       return toast.error('Please add correct data');
