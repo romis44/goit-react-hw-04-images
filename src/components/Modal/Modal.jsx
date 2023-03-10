@@ -1,49 +1,52 @@
-import React, { Component } from 'react';
+import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Overlay, ModalWindow } from './Modal.styled';
+import PropTypes from 'prop-types';
 
-export default class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleEsc);
-  }
+export default function Modal({
+  onClose,
+  currentImageUrl,
+  currentImageDescription,
+}) {
+  useEffect(() => {
+    const handleEscape = event => event.code === 'Escape' && onClose();
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleEsc);
-  }
+    window.addEventListener('keydown', handleEscape);
 
-  handleBackdrop = event => {
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [onClose]);
+
+  const handleBackdrop = event => {
     if (event.target === event.currentTarget) {
-      this.props.onClose();
+      onClose();
     }
   };
 
-  handleEsc = event => {
-    if (event.code === 'Escape') {
-      this.props.onClose();
-    }
-  };
-
-  render() {
-    const { currentImageUrl, currentImageDescription, onClose } = this.props;
-
-    return createPortal(
-      <Overlay onClick={this.handleBackdrop}>
-        <ModalWindow>
-          <button
-            type="button"
-            onClick={onClose}
-            style={{ position: 'absolute' }}
-          >
-            Close
-          </button>
-          <img
-            src={currentImageUrl}
-            alt={currentImageDescription}
-            loading="lazy"
-          />
-        </ModalWindow>
-      </Overlay>,
-      document.querySelector('#modal-root')
-    );
-  }
+  return createPortal(
+    <Overlay onClick={handleBackdrop}>
+      <ModalWindow>
+        <button
+          type="button"
+          onClick={onClose}
+          style={{ position: 'absolute' }}
+        >
+          Close
+        </button>
+        <img
+          src={currentImageUrl}
+          alt={currentImageDescription}
+          loading="lazy"
+        />
+      </ModalWindow>
+    </Overlay>,
+    document.querySelector('#modal-root')
+  );
 }
+
+Modal.propTypes = {
+  currentImageUrl: PropTypes.string,
+  currentImageTag: PropTypes.string,
+  onClose: PropTypes.func.isRequired,
+};

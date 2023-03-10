@@ -1,20 +1,18 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Header, SearchForm, Button, Label, Input } from './Searchbar.styled';
 
-export default class Searchbar extends Component {
-  state = {
-    query: '',
+export default function Searchbar({ onSearch }) {
+  const [query, setQuery] = useState('');
+
+  const onChange = e => {
+    setQuery(e.target.value);
   };
 
-  onChange = e => {
-    this.setState({ query: e.target.value });
-  };
-
-  onSubmit = e => {
+  const onSubmit = e => {
     e.preventDefault();
-    const { onSearch } = this.props;
-    const { query } = this.state;
+
+    // onSearch(query);
 
     if (!query.trim()) {
       return toast.error('Please add correct data');
@@ -22,26 +20,22 @@ export default class Searchbar extends Component {
     onSearch(query);
   };
 
-  render() {
-    const { query } = this.state;
+  return (
+    <Header>
+      <SearchForm onSubmit={onSubmit}>
+        <Button type="submit" style={{ marginRight: '10px' }}>
+          <Label>Search</Label>
+        </Button>
 
-    return (
-      <Header>
-        <SearchForm onSubmit={this.onSubmit}>
-          <Button type="submit" style={{ marginRight: '10px' }}>
-            <Label>Search</Label>
-          </Button>
-
-          <Input
-            type="text"
-            autocomplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-            value={query}
-            onChange={this.onChange}
-          />
-        </SearchForm>
-      </Header>
-    );
-  }
+        <Input
+          type="text"
+          autocomplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+          value={query}
+          onChange={onChange}
+        />
+      </SearchForm>
+    </Header>
+  );
 }
