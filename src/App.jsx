@@ -18,13 +18,14 @@ export default function App() {
   const [currentImageTag, setCurrentImageTag] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (!query) {
       return;
     }
 
+    setError(false);
     setIsLoading(true);
 
     fetchApi(query, page)
@@ -46,11 +47,9 @@ export default function App() {
           setImagesOnPage(prevState => prevState + array.length);
         }
       })
-      .catch(error => {
-        setError(error);
-      })
+      .catch(setError(true))
       .finally(() => setIsLoading(false));
-  }, [query, page, error]);
+  }, [query, page]);
 
   const getResult = query => {
     setQuery(query);
@@ -84,6 +83,7 @@ export default function App() {
       <Searchbar onSearch={getResult} />
       {isLoading && <Loader />}
       {images && <ImageGallery images={images} openModal={onOpenModal} />}
+      {error && <p>Sorry, something went wrong!</p>}
       {imagesOnPage >= 12 && imagesOnPage < totalImages && (
         <Button onLoadMore={onLoadMore} />
       )}
