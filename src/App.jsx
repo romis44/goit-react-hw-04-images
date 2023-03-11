@@ -25,7 +25,6 @@ export default function App() {
       return;
     }
 
-    setError(false);
     setIsLoading(true);
 
     fetchApi(query, page)
@@ -47,8 +46,8 @@ export default function App() {
           setImagesOnPage(prevState => prevState + array.length);
         }
       })
-      .catch(setError(true))
-      .finally(() => setIsLoading(false));
+      .catch(error => setError(error))
+      .finally(setIsLoading(false));
   }, [query, page]);
 
   const getResult = query => {
@@ -56,6 +55,7 @@ export default function App() {
     setPage(1);
     setImages([]);
     setImagesOnPage(0);
+    setError(false);
   };
 
   const onLoadMore = () => {
@@ -82,8 +82,9 @@ export default function App() {
       <Toaster position="top-right" toastOptions={{ duration: 1500 }} />
       <Searchbar onSearch={getResult} />
       {isLoading && <Loader />}
-      {images && <ImageGallery images={images} openModal={onOpenModal} />}
-      {error && <p>Sorry, something went wrong!</p>}
+      {images && !error && (
+        <ImageGallery images={images} openModal={onOpenModal} />
+      )}
       {imagesOnPage >= 12 && imagesOnPage < totalImages && (
         <Button onLoadMore={onLoadMore} />
       )}
